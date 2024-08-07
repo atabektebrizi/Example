@@ -5,8 +5,12 @@ using Example.Database.Repositories;
 using Example.Database.Repositories.Personnels;
 using Example.Database.UnitofWork;
 using Example.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +19,36 @@ Log.Logger=new LoggerConfiguration()
 	.WriteTo.File("Logs/log.txt",
 	rollingInterval:RollingInterval.Day)
 	.CreateLogger();
+
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+	.AddEntityFrameworkStores<Context>()
+	.AddDefaultTokenProviders();
+
+var jwtSettings = builder.Configuration.GetSection("JWT");
+
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+	options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+	{
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = jwtSettings.GetSection("Issuer").Value,
+		ValidAudience = jwtSettings.GetSection("Audience").Value,
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+	};
+});
+
+builder.Services.AddAuthorization(options =>
+{
+	options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+});
 
 
 // Add services to the container.
@@ -61,6 +95,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ErrorHandling>();
 
