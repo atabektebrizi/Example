@@ -32,7 +32,7 @@ public class DistrictService : IDistrictService
     public async Task<dynamic> GetAllDistrictsWithPersonnel()
     {
         var personnelQuery = _unitOfWork.Personnels.GetPersonnelQueryble();
-        var districtQuery = _unitOfWork.Districts.GetDistrictQueryble();
+        var districtQuery = _unitOfWork.Districts.Queryable();
 
 
         //var leftJoin = await districtQuery.GroupJoin(personnelQuery, d => d.Id, p => p.DistrictId,
@@ -58,7 +58,7 @@ public class DistrictService : IDistrictService
 
     public async Task<dynamic> GetDistrictGroups()
     {
-        var query =await _unitOfWork.Districts.GetDistrictQueryble()
+        var query =await _unitOfWork.Districts.Queryable()
             .GroupBy(s => s.Name)
             .Select(s => new
             {

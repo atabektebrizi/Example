@@ -1,5 +1,4 @@
 ﻿
-using Example.Models;
 using Example.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -33,10 +32,14 @@ public class AuthService : IAuthService
             return null;
         }
 
+        var userRoles =await _userManager.GetRolesAsync(user);
+
         var authClaims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub,user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())   ,
+            new Claim(ClaimTypes.Role,userRoles.FirstOrDefault()!)
+
         };
 
 
@@ -44,7 +47,8 @@ public class AuthService : IAuthService
 
         var token=new JwtSecurityToken(
             issuer: _configuration["JWT:Issuer"],
-            audience: _configuration["JWT:Audience"],
+            audience: _configuration["JWT:Audience"],  
+            claims: authClaims,
             expires:DateTime.Now.AddMinutes(60),
             signingCredentials:new SigningCredentials(authSigningKey,SecurityAlgorithms.HmacSha256));
 

@@ -2,8 +2,7 @@
 
 namespace Example.Database.Repositories;
 
-public interface ICityRepository
-{
-    Task AddAsync(City city);
+public interface ICityRepository: IBaseRepository<City>
+{    
     Task<City> GetCityByName(string cityName);
 }

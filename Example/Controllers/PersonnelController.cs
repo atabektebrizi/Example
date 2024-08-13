@@ -1,5 +1,6 @@
 ﻿using Example.ApplicationLayer.Personnels;
 using Example.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Example.Controllers
@@ -44,6 +45,10 @@ namespace Example.Controllers
         [Route(nameof(AddPersonnelInfoAsync))]
         public async Task<IActionResult> AddPersonnelInfoAsync(AddPersonnelInfoModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _personnelService.AddPersonnelAsync(model);
             return Ok(result);
         }
@@ -68,6 +73,7 @@ namespace Example.Controllers
 
         [HttpGet]
         [Route(nameof(GetPersonnelDistinct))]
+        [Authorize(Roles ="User")]
         public async Task<IActionResult> GetPersonnelDistinct()
         {
             var result = await _personnelService.GetPersonnelDistinct();
@@ -76,7 +82,7 @@ namespace Example.Controllers
 
 
         [HttpGet]
-        [Route(nameof(GetPersonnel))]
+        [Route(nameof(GetPersonnel))]        
         public async Task<IActionResult> GetPersonnel(string name)
         {
             var result = await _personnelService.GetPersonnel(name);

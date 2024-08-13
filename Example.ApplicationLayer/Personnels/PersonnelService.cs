@@ -34,6 +34,7 @@ namespace Example.ApplicationLayer.Personnels
                 };
 
                 await _unitOfWork.Personnels.AddAsync(personnel);
+                await _unitOfWork.Personnels.AddAsync(personnel);
                 await _unitOfWork.CompleteAsync();
                 model.Id = personnel.Id;
                 return model;
@@ -198,7 +199,7 @@ namespace Example.ApplicationLayer.Personnels
         public async Task<dynamic> GetPersonnelDistrictJoin()
         {
             var personnelQuery = _unitOfWork.Personnels.GetPersonnelQueryble();
-            var districtQuery = _unitOfWork.Districts.GetDistrictQueryble();
+            var districtQuery = _unitOfWork.Districts.Queryable();
 
             var join =await personnelQuery.Join(districtQuery, p => p.DistrictId, d => d.Id, (p, d) => new
             {

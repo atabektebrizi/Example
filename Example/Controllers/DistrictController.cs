@@ -1,4 +1,5 @@
 ﻿using Example.ApplicationLayer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Example.Controllers;
@@ -6,6 +7,7 @@ namespace Example.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Roles = "Admin")]
 public class DistrictController : Controller
 {  
 
@@ -25,6 +27,7 @@ public class DistrictController : Controller
 
     [HttpGet]
     [Route(nameof(GetDistrictGroup))]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetDistrictGroup()
     {
         return Ok(await _districtService.GetDistrictGroups());

@@ -3,12 +3,10 @@ using System.Linq.Expressions;
 
 namespace Example.Database.Repositories.Personnels
 {
-    public interface IPersonnelRepository
+    public interface IPersonnelRepository:IBaseRepository<Personnel>
     {
-        Task<Personnel> AddAsync(Personnel personnel);
-        Task<Personnel> Get(int id);
-        Personnel Update(Personnel personnel);
-
+        Task<Personnel> AddAsync(Personnel personnel);        
+        Task<Personnel> Update(Personnel personnel);
         IQueryable<Personnel> GetPersonnelQueryble(Expression<Func<Personnel, bool>>? expression = null);
     }
 }

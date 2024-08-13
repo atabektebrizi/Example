@@ -2,9 +2,7 @@
 
 namespace Example.Database.Repositories;
 
-public interface IDistrictRepository
+public interface IDistrictRepository:IBaseRepository<District>
 {
-    Task<District> GetDistrictByCityAndName(string cityName, string districtName);
-    Task AddAsync(District district);
-    IQueryable<District> GetDistrictQueryble();
+    Task<District> GetDistrictByCityAndName(string cityName, string districtName);        
 }

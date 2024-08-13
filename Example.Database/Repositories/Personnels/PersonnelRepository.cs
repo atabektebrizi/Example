@@ -1,43 +1,31 @@
 ﻿using Example.DomainLayer;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace Example.Database.Repositories.Personnels
 {
-    public class PersonnelRepository : IPersonnelRepository
-    {
-        private readonly Context _context;
-
-        public PersonnelRepository(Context context)
-        {
-            _context = context;
+    public class PersonnelRepository :BaseRepository<Personnel>, IPersonnelRepository
+    {        
+        public PersonnelRepository(Context context):base(context)
+        {            
         }
 
         public async Task<Personnel> AddAsync(Personnel personnel)
         {
-            return (await _context.Set<Personnel>().AddAsync(personnel)).Entity;
+            await AddAsync(personnel);
+            return personnel;
         }
 
-        public async Task<Personnel> Get(int id)
+        public async Task<Personnel> Update(Personnel personnel)
         {
-            var record=await _context.Set<Personnel>().FindAsync(id);
-            return record;
+            await UpdateAsync(personnel);
+            return personnel;
         }
-
-        public Personnel Update(Personnel personnel)
-        {
-            return (_context.Set<Personnel>().Update(personnel)).Entity;
-        }
-
 
         public IQueryable<Personnel> GetPersonnelQueryble(Expression<Func<Personnel,bool>>? expression=null)
         {
-            var query= _context.Set<Personnel>();
-
-            if(expression!=null)
-                return query.Where(expression);
-
-            return query;
+            return expression==null? Queryable():Queryable(expression);
         }
 
 
