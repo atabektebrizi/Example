@@ -24,4 +24,7 @@ public class CityController : Controller
         await _cityService.Add(city);
         return Ok();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCityList() => Ok(await _cityService.CityList());
 }
